@@ -49,8 +49,8 @@ import withHMR from '../utils/withHMR'
 import { generateExtensions } from '../utils/blocks'
 
 let emitter: EventEmitter | null = null
-
 if (window.IntlPolyfill) {
+  console.log(canUseDOM)
   if (!window.Intl) {
     window.Intl = window.IntlPolyfill
   } else if (!canUseDOM) {

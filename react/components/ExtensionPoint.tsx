@@ -4,7 +4,7 @@ import React, { FC, Fragment } from 'react'
 import ExtensionPointComponent from './ExtensionPointComponent'
 import Loading from './Loading'
 import { useRuntime } from './RenderContext'
-import { useTreePath } from '../utils/treePath'
+import { useTreePath, isParentTreePath } from '../utils/treePath'
 // import TrackEventsWrapper from './TrackEventsWrapper'
 
 interface Props {
@@ -149,6 +149,8 @@ const ExtensionPoint: FC<Props> = props => {
       ? getChildExtensions(runtime, newTreePath)
       : children
 
+  const shouldShowOfflinePage = window && window.navigator && !window.navigator.onLine
+
   const extensionPointComponent = withOuterExtensions(
     after,
     around,
@@ -164,8 +166,11 @@ const ExtensionPoint: FC<Props> = props => {
       >
         {componentChildren}
       </ExtensionPointComponent>
-    ) : (
+    ) : ( 
+      shouldShowOfflinePage && isParentTreePath(newTreePath) ?
+      (<h1>You're offline!</h1>) :(
       <Loading extension={extension} />
+      )
     )
   )
 

@@ -115,8 +115,10 @@ export const fetchNavigationPage = ({
       ({
         data: { navigationPage: pageData },
         errors,
-      }: GraphQLResult<'navigationPage', PageQueryResponse>) =>
-        errors ? Promise.reject(errors) : parsePageQueryResponse(pageData)
+      }: GraphQLResult<'navigationPage', PageQueryResponse>) => {
+        return errors ? Promise.reject(errors) : parsePageQueryResponse(pageData)
+      }
+        // errors ? Promise.reject(errors) : parsePageQueryResponse(pageData)
     )
 
 const getRoutesParam = (routeIds: string[], pages: Pages) => {

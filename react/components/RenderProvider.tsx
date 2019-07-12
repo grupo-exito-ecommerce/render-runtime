@@ -536,7 +536,6 @@ class RenderProvider extends Component<Props, RenderProviderState> {
         pagesState[page]
       )
     }
-
     this.setState(
       {
         extensions: replaceExtensionsWithDefault(

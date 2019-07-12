@@ -41,6 +41,11 @@ export const getDirectChildren = (extensions: Extensions, treePath: string) => {
     })
 }
 
+export const isParentTreePath = (treePath: String) => (
+  treePath && treePath != "" && treePath.split('/')[0] &&
+  treePath.split('/')[0] === treePath
+)
+
 export const TreePathContext = React.createContext<TreePathProps>({
   treePath: '',
 })
