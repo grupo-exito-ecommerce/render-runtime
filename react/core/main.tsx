@@ -36,7 +36,6 @@ import { buildCacheLocator } from '../utils/client'
 import { ensureContainer, getContainer, getMarkups } from '../utils/dom'
 import { registerEmitter } from '../utils/events'
 import { getBaseURI } from '../utils/host'
-import { addLocaleData } from '../utils/locales'
 import registerComponent from '../utils/registerComponent'
 import { withSession } from '../utils/session'
 import { TreePathContext, useTreePath } from '../utils/treePath'
@@ -51,6 +50,7 @@ import { generateExtensions } from '../utils/blocks'
 let emitter: EventEmitter | null = null
 
 if (window.IntlPolyfill) {
+  window.IntlPolyfill.__disableRegExpRestore()
   if (!window.Intl) {
     window.Intl = window.IntlPolyfill
   } else if (!canUseDOM) {
@@ -115,14 +115,14 @@ const render = async (
     page,
     pages,
     extensions,
-    culture: { locale },
   } = runtime
 
   const cacheControl = canUseDOM ? undefined : new PageCacheControl()
   const baseURI = getBaseURI(runtime)
   registerEmitter(runtime, baseURI)
   emitter = runtime.emitter
-  addLocaleData(locale)
+
+  await import('../intl-polyfill')
 
   const isPage =
     !!pages[name] && !!pages[name].path && !!extensions[name].component
