@@ -4,7 +4,7 @@ import 'core-js/fn/symbol/iterator'
 import * as Sentry from '@sentry/browser'
 import { canUseDOM } from 'exenv'
 import * as runtimeGlobals from './core/main'
-import { appendDataToReactIntl } from './utils/reactIntl'
+import { createReactIntl } from './utils/reactIntl'
 
 import { createCustomReactApollo } from './utils/reactApollo'
 
@@ -58,7 +58,7 @@ if (window.ReactApollo) {
 }
 
 if (window.ReactIntl) {
-  appendDataToReactIntl()
+  window.ReactIntl = createReactIntl()
 }
 
 const sentryDSN = 'https://2fac72ea180d48ae9bf1dbb3104b4000@sentry.io/1292015'
