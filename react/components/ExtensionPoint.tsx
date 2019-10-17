@@ -84,17 +84,25 @@ function withOuterExtensions(
   const padding = 90
   const width = (window && window.innerWidth) || 0
   const height = (window && window.innerHeight) || 0
+  const isOffline = window && window.navigator && !window.navigator.onLine
 
   const genericPreview = (
     <div className={'center w-100'} style={{ padding }}>
       <Box height={height} width={width} />
     </div>
   )
+  const offlineWarning = (
+    <div>
+      <h1>Youre offline</h1>
+    </div>
+  )
+
+  const fallbackContent = isOffline ? offlineWarning : genericPreview
 
   const wrapped = (
     <Fragment key={`wrapped-${treePath}`}>
       {beforeElements}
-      {isRootTreePath && preview ? genericPreview : element}
+      {isRootTreePath && preview ? fallbackContent : element}
       {isRootTreePath && <div className="flex flex-grow-1" />}
       {afterElements}
     </Fragment>
