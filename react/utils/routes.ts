@@ -117,6 +117,7 @@ export const fetchServerPage = async ({
     __pickRuntime: runtimeFields,
   } as any
   const url = format(parsedUrl)
+  console.log({ url })
   const page: ServerPageResponse = await fetchWithRetry(
     url,
     {

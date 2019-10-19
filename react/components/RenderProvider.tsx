@@ -535,12 +535,11 @@ class RenderProvider extends Component<Props, RenderProviderState> {
     // preview should be according to the entitiy (department, search, product),
     // and the fallback should be the generic preview.
     const { domain } = this.state.route
-    this.setState(
-      {
-        preview: domain !== 'admin',
-      },
-      () => this.scrollTo(state.scrollOptions)
-    )
+    this.setState({
+      preview: domain !== 'admin',
+    })
+    //   () => this.scrollTo(state.scrollOptions)
+    // )
 
     const paramsJSON = JSON.stringify(params)
     const apolloClient = this.apolloClient
@@ -565,6 +564,15 @@ class RenderProvider extends Component<Props, RenderProviderState> {
             pages,
             settings,
           }: ParsedServerPageResponse) => {
+            // console.log({ ...this.state.extensions, ...extensions })
+            // Object.keys(extensions).forEach(extension => {
+            //   if (
+            //     extension.includes('$before') ||
+            //     extension.includes('$after')
+            //   ) {
+            //     delete extensions[extension]
+            //   }
+            // })
             this.setState(
               {
                 appsEtag,
@@ -582,6 +590,7 @@ class RenderProvider extends Component<Props, RenderProviderState> {
               () => {
                 this.replaceRouteClass(page)
                 this.sendInfoFromIframe()
+                this.scrollTo(state.scrollOptions)
               }
             )
           }

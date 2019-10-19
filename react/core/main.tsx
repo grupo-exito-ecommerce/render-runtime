@@ -16,6 +16,7 @@ import { Helmet } from 'react-helmet'
 import NoSSR, { useSSR } from '../components/NoSSR'
 import { isEmpty } from 'ramda'
 import Loading from '../components/Loading'
+import { LoadingContext } from '../components/LoadingContext'
 
 import { ChildBlock, useChildBlock } from '../components/ChildBlock'
 import ExtensionContainer from '../components/ExtensionContainer'
@@ -320,6 +321,7 @@ export {
   useTreePath,
   withSession,
   Loading,
+  LoadingContext,
   buildCacheLocator,
   renderExtension,
   // These unstable APIs should be deprecated shortly

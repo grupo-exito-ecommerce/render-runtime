@@ -1,4 +1,5 @@
 import React, { ReactElement, RefObject } from 'react'
+import NoSSR from '../NoSSR'
 
 import Box from './Box'
 import Circle from './Circle'
@@ -44,7 +45,6 @@ export default class Preview extends React.PureComponent<Props, State> {
         return <Box width={width} height={height} />
       case 'text':
         return <Text width={width} height={height} />
-      /** TODO: add support for Grid preview */
       case 'grid':
         return <Grid width={width} height={height} />
       case 'circle':
@@ -111,7 +111,7 @@ export default class Preview extends React.PureComponent<Props, State> {
     const { width, height } = extension.preview
 
     return {
-      height: this.getDimension(height),
+      height: 1400, //this.getDimension(height),
       width: this.getDimension(width),
     }
   }
@@ -140,6 +140,7 @@ export default class Preview extends React.PureComponent<Props, State> {
         padding * 2,
       0
     )
+
     const height =
       initialHeight && initialHeight > padding * 2
         ? initialHeight - padding * 2
@@ -150,6 +151,7 @@ export default class Preview extends React.PureComponent<Props, State> {
     }
 
     return (
+      // <NoSSR>
       /** TODO: remove this div in favor of the Container component,
        * currently on store-components
        * @author: lbebber
@@ -162,6 +164,7 @@ export default class Preview extends React.PureComponent<Props, State> {
       >
         {this.renderPreviewGraphic(width, height, type)}
       </div>
+      // </NoSSR>
     )
   }
 }

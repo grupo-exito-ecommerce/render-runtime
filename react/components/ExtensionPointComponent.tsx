@@ -2,16 +2,18 @@ import ReactDOM from 'react-dom'
 import * as Sentry from '@sentry/browser'
 import PropTypes from 'prop-types'
 import { forEachObjIndexed, pickBy } from 'ramda'
-import React, { ErrorInfo, PureComponent } from 'react'
+import React, { ErrorInfo, PureComponent, Fragment } from 'react'
 
 import { getImplementation } from '../utils/assets'
 import graphQLErrorsStore from '../utils/graphQLErrorsStore'
 
 import ExtensionPointError from './ExtensionPointError'
 import Loading from './Loading'
+import { withLoading } from './LoadingContext'
 import { RenderContextProps } from './RenderContext'
 import { TreePathContextProvider } from '../utils/treePath'
 import { isSiteEditorIframe } from '../utils/dom'
+import GenericPreview from './Preview/GenericPreview'
 
 interface Props {
   component: string | null
@@ -49,6 +51,7 @@ class ExtensionPointComponent extends PureComponent<
 
     this.state = {
       operationIds: [],
+      loaded: false,
     }
     this.mountedError = false
   }
@@ -58,7 +61,12 @@ class ExtensionPointComponent extends PureComponent<
       return false
     }
 
-    this.setState({ error: null, errorInfo: null, lastUpdate: Date.now() })
+    this.setState({
+      error: null,
+      errorInfo: null,
+      lastUpdate: Date.now(),
+      loaded: true,
+    })
     const { component: mounted, treePath } = this.props
 
     console.log(
@@ -93,6 +101,8 @@ class ExtensionPointComponent extends PureComponent<
         .catch(() => {
           componentPromiseResolvedMap[component] = true
         })
+    } else if (!this.state.loaded) {
+      this.setState({ loaded: true })
     }
   }
 
@@ -163,9 +173,15 @@ class ExtensionPointComponent extends PureComponent<
     this._isMounted = true
     this.fetchAndRerender()
     this.addDataToElementIfEditable()
+    if (this.props.setLoading) {
+      this.props.setLoading(this.props.treePath, true)
+    }
   }
 
-  public componentDidUpdate() {
+  public componentDidUpdate(prevProps, prevState) {
+    if (!prevState.loaded && this.state.loaded && this.props.setLoading) {
+      this.props.setLoading(this.props.treePath, false)
+    }
     this.fetchAndRerender()
     if (this.state.error) {
       if (this.mountedError) {
@@ -219,13 +235,40 @@ class ExtensionPointComponent extends PureComponent<
       delete props.__clearError
     }
 
+    // if (!Component) {
+    //   console.log('missing component', component, treePath)
+    // }
+
+    const isRootTreePath = treePath.indexOf('/') === -1
+    const isAround = treePath.indexOf('$around') !== -1
+
     return (
       <TreePathContextProvider treePath={treePath}>
         {Component ? (
           <Component {...props}>{children}</Component>
+        ) : isRootTreePath ? (
+          <Fragment>
+            {this.props.props.beforeElements}
+            <GenericPreview />
+            {this.props.props.afterElements}
+          </Fragment>
+        ) : // <div className="ba b--red bg--red h-100">
+        //   Raiz {treePath} {component}
+        // </div>
+        isAround ? (
+          <Fragment>
+            {this.props.props.beforeElements}
+            <GenericPreview />
+            {this.props.props.afterElements}
+          </Fragment>
         ) : (
-          children || <Loading />
-        )}
+          <GenericPreview />
+        )
+        // <div className="ba b--blue">
+        //   {treePath} {component}
+        // </div>
+        // <Loading />
+        }
       </TreePathContextProvider>
     )
   }
@@ -266,4 +309,5 @@ class ExtensionPointComponent extends PureComponent<
   }
 }
 
-export default ExtensionPointComponent
+export default withLoading(ExtensionPointComponent)
+// export default ExtensionPointComponent

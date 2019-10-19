@@ -1,8 +1,10 @@
 import PropTypes from 'prop-types'
-import React, { Component } from 'react'
+import React, { Component, useContext } from 'react'
 import { useTreePath } from '../utils/treePath'
 import ExtensionPoint from './ExtensionPoint'
 import { useRuntime } from './RenderContext'
+import Loading from './Loading'
+import { LoadingWrapper } from './LoadingContext'
 
 type Element = string | ElementArray
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -19,6 +21,7 @@ interface ContainerProps {
   isRow: boolean
   isMobile?: boolean
   preview?: boolean
+  loading?: boolean
 }
 
 interface ContainerState {
@@ -35,6 +38,7 @@ class Container extends Component<ContainerProps, ContainerState> {
     isRow: PropTypes.bool,
     isMobile: PropTypes.bool,
     preview: PropTypes.bool,
+    loading: PropTypes.bool,
   }
 
   public state = {
@@ -135,6 +139,7 @@ const LayoutContainer: React.FunctionComponent<
   const { treePath } = useTreePath()
 
   const extension = extensions[treePath]
+
   const elements =
     (extension &&
       extension.blocks &&
@@ -142,7 +147,7 @@ const LayoutContainer: React.FunctionComponent<
     []
   const containerProps = { ...props, elements }
 
-  return (
+  const r = (
     <Container
       {...containerProps}
       preview={preview}
@@ -150,6 +155,14 @@ const LayoutContainer: React.FunctionComponent<
       isMobile={hints.mobile}
     />
   )
+
+  const isRootTreePath = treePath.indexOf('/') === -1
+
+  if (extension.preview && isRootTreePath) {
+    return <LoadingWrapper>{r}</LoadingWrapper>
+  }
+
+  return r
 }
 
 export default LayoutContainer
